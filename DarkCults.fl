@@ -1,17 +1,18 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0108 
+version 1.0302 
 header_name {.h} 
 code_name {.cxx}
 Function {make_window()} {open
 } {
   code {time=os.time
-gameroot="/ig3d_mac_xcode/"
+gameroot=lfs.currentdir().."/"
 DealMode=true
 goodDeck={}
 
 evilDeck={}
 goodpoints=1
 evilpoints=1
+pt=0
 gCurrentPlayer=good} {}
   code {Atmosphere={{"a", "creepy", "trees", "A", "D", "L", "T"},
 {"a", "dark", "memories", "A", "D", "L", "T"},
@@ -402,7 +403,7 @@ ttracksC1C2ST="fiendish tracks",
 
 tunnaturalC1C2ST="glimpse of something unnatural"
 }} {}
-  code {CultRoot = "/ig3d_mac_xcode/Data/Fluid/DarkCults/"
+  code {CultRoot = lfs.curentdir().."/"
 CultImages=CultRoot.."DarkCult_Images/"
 cbrowsertable={}
 gFoldersFound={}
@@ -703,13 +704,14 @@ function pacePick(s)
 pp=false
 if s=="a" then pp=true end
 
-if s=="l" then pt=true end
-if pt == true then 
+if s=="l" then ptest=true end
+if ptest == true then 
 
 
 n=\#paceDeck
 s=paceDeck[n][1]
 p=paceDeck[n][2]
+if s ~= nil then
 tname=string.gsub(s,"_","")
 resultsBrowser:add(CultDescriptions[tname])
 theFile=string.sub(p,string.len(gBrowserPath),-1)
@@ -719,10 +721,27 @@ updatePNGPreviewBox(theFile,boxcount)
 ss=string.sub(s,1,1)
 scorepoints(ss)
 end
- 
-
-end} {selected
-  }
+end
+end
+theDeck={}
+goodDeck={}
+paceDeck={}
+function shuffleDeck()
+theDeck={}
+myfiles=getAllFoldersandFiles(CultImages)
+n=\#gFilesFound
+for i=\#myfiles,1,-1 do
+r=math.random(1,\#myfiles)
+o=myfiles[r]
+table.remove(myfiles,r)
+	if string.find(o,"pace") ~= nil then
+	table.insert(paceDeck,o)
+	else
+	table.insert(theDeck,o)
+	end
+end
+return theDeck
+end} {}
   code {theDeck={}
 goodDeck={}
 paceDeck={}
@@ -795,6 +814,7 @@ end
 end} {}
   code {function evilCard(n)
 gCurrentPlayer="evil"
+if \#evilDeck <=0 then return end
 s=evilDeck[n][1]
 p=evilDeck[n][2]
 theFile=string.sub(p,string.len(gBrowserPath),-1)
@@ -851,19 +871,33 @@ o=goodDeck[i][1]
 goodBrowser:add(o)
 end
 goodBrowser:redraw()
-
-evilCard(math.random(1,\#evilDeck))
+nEvil = math.random(1,\#evilDeck)
+if nEvil ~= nil then evilCard(nEvil) end
 end
 
 function evilPick(w)
 if w:value() == nil or w:value() == 0 then return end
 n=w:value()
 evilCard(n)
+end
+do PNGBrowserNew= fltk:Fl_Double_Window(0,0,0,0,"")
+if gLabelTable==nil then gLabelTable={} end
+table.insert(gLabelTable, "PNG Browser")
+PNGBrowserNew:label(gLabelTable[\#gLabelTable])
+--PNGBrowserNew:callback(wClose)
+PNGBrowserNew:resize(6,50,1117,441)
+Fl_Group:current():resizable(PNGBrowserNew)
+PNGBrowserNew:size_range(266,555,1640,1640)
+--PNGBrowserNew:show()
+do pngPreviewBox1= fltk:Fl_Box(0,0,0,0,"")
+pngPreviewBox1:resize(5,2,180,240)
+pngPreviewBox1:box(fltk.FL_FLAT_BOX)
+pngPreviewBox1:color(40)
+pngPreviewBox1:align(16)
 end} {}
   Fl_Window PNGBrowserNew {
-    label {PNG Browser}
-    callback wClose open
-    xywh {6 50 1117 441} type Double resizable size_range {266 555 1640 1640} visible
+    label {PNG Browser} open selected
+    xywh {8 50 1117 441} type Double resizable size_range {266 555 1640 1640} visible
   } {
     Fl_Box pngPreviewBox1 {
       xywh {5 2 180 240} box FLAT_BOX color 40 align 16

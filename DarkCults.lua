@@ -1,12 +1,13 @@
 --function make_window()
 time=os.time
-gameroot="/ig3d_mac_xcode/"
+gameroot=lfs.currentdir().."/"
 DealMode=true
 goodDeck={}
 
 evilDeck={}
 goodpoints=1
 evilpoints=1
+pt = 0
 gCurrentPlayer=good
 Atmosphere={{"a", "creepy", "trees", "A", "D", "L", "T"},
 {"a", "dark", "memories", "A", "D", "L", "T"},
@@ -397,7 +398,7 @@ ttracksC1C2ST="fiendish tracks",
 
 tunnaturalC1C2ST="glimpse of something unnatural"
 }
-CultRoot = "/ig3d_mac_xcode/Data/Fluid/DarkCults/"
+CultRoot = lfs.currentdir().."/"
 CultImages=CultRoot.."DarkCult_Images/"
 cbrowsertable={}
 gFoldersFound={}
@@ -698,13 +699,14 @@ function pacePick(s)
 pp=false
 if s=="a" then pp=true end
 
-if s=="l" then pt=true end
-if pt == true then 
+if s=="l" then ptest=true end
+if ptest == true then 
 
 
 n=#paceDeck
 s=paceDeck[n][1]
 p=paceDeck[n][2]
+if s ~= nil then
 tname=string.gsub(s,"_","")
 resultsBrowser:add(CultDescriptions[tname])
 theFile=string.sub(p,string.len(gBrowserPath),-1)
@@ -714,8 +716,7 @@ updatePNGPreviewBox(theFile,boxcount)
 ss=string.sub(s,1,1)
 scorepoints(ss)
 end
- 
-
+end
 end
 theDeck={}
 goodDeck={}
@@ -738,7 +739,7 @@ return theDeck
 end
 shuffleDeck()
 
-evilDeck={}
+
 
 function dealGood()
 DealMode=true
@@ -787,8 +788,10 @@ en=#evilDeck
 end
 
 end
+
 function evilCard(n)
 gCurrentPlayer="evil"
+if #evilDeck <=0 then return end
 s=evilDeck[n][1]
 p=evilDeck[n][2]
 theFile=string.sub(p,string.len(gBrowserPath),-1)
@@ -845,8 +848,8 @@ o=goodDeck[i][1]
 goodBrowser:add(o)
 end
 goodBrowser:redraw()
-
-evilCard(math.random(1,#evilDeck))
+nEvil = math.random(1,#evilDeck)
+if nEvil ~= nil then evilCard(nEvil) end
 end
 
 function evilPick(w)
@@ -858,7 +861,7 @@ do PNGBrowserNew= fltk:Fl_Double_Window(0,0,0,0,"")
 if gLabelTable==nil then gLabelTable={} end
 table.insert(gLabelTable, "PNG Browser")
 PNGBrowserNew:label(gLabelTable[#gLabelTable])
-PNGBrowserNew:callback(wClose)
+--PNGBrowserNew:callback(wClose)
 PNGBrowserNew:resize(6,50,1117,441)
 Fl_Group:current():resizable(PNGBrowserNew)
 PNGBrowserNew:size_range(266,555,1640,1640)
