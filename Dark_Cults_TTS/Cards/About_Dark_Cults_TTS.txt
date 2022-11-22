@@ -1,0 +1,6 @@
+About_Dark_Cults_TTS
+These are higher resolution images extracted from the Dark Cults Tabletop Simulator Steam Workshop mod by Kendo353 
+
+That version isn't working, cards turn up black and Kendo353 hasn't done anything with the project since that issue was reported back in June 2021.
+
+I intend to update the project here using these higher resolution versions.
